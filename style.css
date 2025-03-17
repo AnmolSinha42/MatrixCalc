@@ -1,0 +1,38 @@
+.heading
+{
+    text-align: center;
+}
+
+.table
+{
+    background-color: #fcfed1;
+    margin-bottom: 20px;
+    
+}
+
+body
+{
+    background-image: url("./Meme-This\ is\ fine.jpg");
+    background-color: #eaf07e74;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position-y: 50px;
+    background-blend-mode: lighten;
+}
+
+.instruction
+{
+    background-color: #fcfed1;
+
+}
+
+.matrix
+{
+    background-color: #fcfed1;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    padding-left: 7px;
+    border-radius: 5px;
+    margin : 20px 940px 30px 20px;
+    
+}
