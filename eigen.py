@@ -304,10 +304,12 @@ if number_of_matrix == 2:
     column1 = int(input("number of columns of matrix 1:  "))
     row2 = int(input("number of rows of matrix 2:  "))
     column2 = int(input("number of columns of matrix 2:  "))
+    print()
 else:
     del features_available[6:]
     rows = int(input("number of rows of matrix:  "))
     columns = int(input("number of columns of matrix:  "))
+    print()
     
     mat = inp_mat(rows,columns)
     if rows != columns:
@@ -317,10 +319,10 @@ else:
             print_mat(transpose(mat))
         else:
             print_mat(display_mat(transpose(mat)))
-            
-
-    if det(mat) == 0:
-        features_available.remove("inverse")
+        
+    else:       
+        if det(mat) == 0:
+            features_available.remove("inverse")
 
 
 
