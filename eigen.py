@@ -62,7 +62,7 @@ def create_zeropoly(exp1,exp2):
     return poly
 
 def fill(exp,max):  #exp1,2 are in processed form ie [['1', 'x', '3'], ['3', 'x', '2'], ['3', 'x', '1'], ['1', 'x', '0']] max is max power
-    ls=exp
+    ls=exp.copy()
     powers = []
     for i in range(len(exp)):
         powers.append(int(exp[i][2]))
