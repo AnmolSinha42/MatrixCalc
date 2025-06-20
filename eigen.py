@@ -17,6 +17,33 @@ def process(str): #in form 5*x^4+1*x^0
     
     return processed_ls
 
+def anti_process(ls):  #in processed form
+    normal_form = ""
+    exp = ls.copy()
+     #high_exp is the highest power of term in expression not included in normal form
+    while len(exp)>0: #len(exp) has the number of terms
+        #pick highest and include
+        
+        high_exp = max_power(exp)
+        for j in range(len(exp)):
+            if int(exp[j][2]) == high_exp:
+                if normal_form != "":
+                    normal_form += "+"
+                normal_form += str(exp[j][0])+"*"+str(exp[j][1])+"^"+str(exp[j][2])
+            exp.pop(j)
+            break
+    return normal_form
+
+def display_mat(mat): #makes a matrix consisting of expressions into displayable format
+    displayed_mat = []
+    for i in range(len(mat)):
+        row = []
+        for j in range(len(mat[0])):
+            row.append(anti_process(mat[i][j]))
+        displayed_mat.append(row)
+    return displayed_mat
+            
+
 def max_power(exp): #exp1,2 are in processed form ie [['1', 'x', '3'], ['3', 'x', '2'], ['3', 'x', '1'], ['1', 'x', '0']]
     highest = 0
     for i in range(len(exp)):
@@ -96,7 +123,7 @@ def make_submat(mat,delrow,delcol):
             sub.append(row)
     return sub
 
-def det(mat):
+def det(mat): # mat is in processed form
     sub = []
     deter = [['0','x','0']]
     if len(mat)>2:
@@ -148,7 +175,7 @@ def mat_add(mat1,mat2):
     mat = []
     for i in range(len(mat1)):
         row = []
-        for j in range(len(mat1)):
+        for j in range(len(mat1[0])):
             row.append(polyadd(mat1[i][j],mat2[i][j]))
         mat.append(row)
     return mat
@@ -217,6 +244,30 @@ def inv(mat): #must be a processed matrix
         inv.append(row)
     return inv
 
+def approximate(num,n): #3-n decimal place
+    return int(num*10**n)/10**n
+
+def approx_mat(mat,n): #integer entries
+    for i in range(len(mat)):
+        for j in range(len(mat[0])):
+            mat[i][j] = approximate(mat[i][j],n)
+    return mat
+
+def inp_mat(m,n): #where m and n is number of rows and columns 
+    mat = []
+    for i in range(m):
+        row = []
+        for j in range(n):
+            row.append(process(input(f"item at row {i}, column {j} (in form 5*x^4+1*x^0) :  ")))
+        mat.append(row)
+    return mat #mat is in processed form
+
+def print_mat(mat):
+    for i in range(len(mat)):
+        for j in range(len(mat[0])):
+            print(mat[i][j],end=" ")  
+        print()
+
 inp = [[1,2,3,6],[2,3,4,7],[4,5,9,8],[10,11,12,13]]#SQUARE MATRIX 
 inp2 = [[0,-1],[1,0]] 
 inp3 = [[2,3,4],[5,8,6],[0,4,2],[1,7,6]]
@@ -232,6 +283,47 @@ inp3 = [[2,3,4],[5,8,6],[0,4,2],[1,7,6]]
 #print(anti_process_mat(adjoint(process_mat(inp))))
 #print(det_to_num(det(process_mat(inp))))
 
-print(anti_process_mat(inv(process_mat(inp))))
+"""
+Features:
+    Transpose
+    det
+    add
+    characeristic poly
+    eigen values
+    adjoint 
+    inverse
+"""
 
-'''MAKE AN APPROXIMATION FUNCTION TO APPROXIMATE TO 3 DECIMAL PLACES'''
+features_available = ["Transpose","det","characteristic poly","eigen values","adjoint","inverse","add"]
+number_of_matrix = int(input("unary operation or binary? Enter 1 or 2 :  "))
+expressions = int(input("Matrix contains expressions? (1 for yes, 0 for no) :  "))
+
+if number_of_matrix == 2:
+    del features_available[0:6]
+    row1 = int(input("number of rows of matrix 1:  "))
+    column1 = int(input("number of columns of matrix 1:  "))
+    row2 = int(input("number of rows of matrix 2:  "))
+    column2 = int(input("number of columns of matrix 2:  "))
+else:
+    del features_available[6:]
+    rows = int(input("number of rows of matrix:  "))
+    columns = int(input("number of columns of matrix:  "))
+    
+    mat = inp_mat(rows,columns)
+    if rows != columns:
+        del features_available[1:]
+        print("Transpose: \n")
+        if expressions == 0:
+            print_mat(transpose(mat))
+        else:
+            print_mat(display_mat(transpose(mat)))
+            
+
+    if det(mat) == 0:
+        features_available.remove("inverse")
+
+
+
+
+
+
