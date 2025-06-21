@@ -6,6 +6,12 @@ def round_to(num,digits): #digits = decimal digits
     
 def process(str): #in form 5*x^4+1*x^0
     text = ''
+
+    #check for number typed
+    if str.isnumeric():
+        processed_ls = [[str,"x","0"]]
+        return processed_ls
+    
     for i in str:
         if i != ' ':
             text+=i
@@ -39,8 +45,12 @@ def display_mat(mat): #makes a matrix consisting of expressions into displayable
     for i in range(len(mat)):
         row = []
         for j in range(len(mat[0])):
-            row.append(anti_process(mat[i][j]))
+            if len(mat[i][j]) == 1 and int(mat[i][j][0][2]) == 0:
+                row.append(mat[i][j][0][0])
+            else:   
+                row.append(anti_process(mat[i][j]))
         displayed_mat.append(row)
+
     return displayed_mat
             
 
@@ -170,8 +180,8 @@ def identity(order):
                 row.append([['0','x','0']])
         mat.append(row)
     return mat
-
-def mat_add(mat1,mat2):
+ 
+def mat_add(mat1,mat2): #mat1 and mat2 are in processed form
     mat = []
     for i in range(len(mat1)):
         row = []
@@ -253,12 +263,12 @@ def approx_mat(mat,n): #integer entries
             mat[i][j] = approximate(mat[i][j],n)
     return mat
 
-def inp_mat(m,n): #where m and n is number of rows and columns 
+def inp_mat(m,n,expression): #where m and n is number of rows and columns 
     mat = []
     for i in range(m):
         row = []
         for j in range(n):
-            row.append(process(input(f"item at row {i}, column {j} (in form 5*x^4+1*x^0) :  ")))
+            row.append(process(input(f"item at row {i}, column {j}" + "(in form 5*x^4+1*x^0)"*expression + " :  ")))
         mat.append(row)
     return mat #mat is in processed form
 
@@ -300,25 +310,35 @@ expressions = int(input("Matrix contains expressions? (1 for yes, 0 for no) :  "
 
 if number_of_matrix == 2:
     del features_available[0:6]
+
     row1 = int(input("number of rows of matrix 1:  "))
     column1 = int(input("number of columns of matrix 1:  "))
+    mat1 = inp_mat(row1,column1,expressions) #mat1 in processed form
+    print()
+    
     row2 = int(input("number of rows of matrix 2:  "))
     column2 = int(input("number of columns of matrix 2:  "))
+    mat2 = inp_mat(row2,column2,expressions)
     print()
+
+    #check error
+    if row1 == row2 and column1 == column2:
+        print("Sum: ")
+        print_mat(display_mat(mat_add(mat1,mat2)))
+    else:
+        print("for sum, they must have same number of rows and columns.")
+
 else:
     del features_available[6:]
     rows = int(input("number of rows of matrix:  "))
     columns = int(input("number of columns of matrix:  "))
     print()
     
-    mat = inp_mat(rows,columns)
+    mat = inp_mat(rows,columns,expressions)
     if rows != columns:
         del features_available[1:]
-        print("Transpose: \n")
-        if expressions == 0:
-            print_mat(transpose(mat))
-        else:
-            print_mat(display_mat(transpose(mat)))
+        print("Transpose: ")
+        print_mat(display_mat(transpose(mat)))
         
     else:       
         if det(mat) == 0:
