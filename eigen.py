@@ -8,20 +8,22 @@ def process(str): #in form 5*x^4+1*x^0
     text = ''
 
     #check for number typed
-    if str.isnumeric():
+    try:
+        num = float(str)
         processed_ls = [[str,"x","0"]]
         return processed_ls
     
-    for i in str:
-        if i != ' ':
-            text+=i
-    processed_ls = text.split('+')
-    
-    for i in range(len(processed_ls)):
-        ls = [processed_ls[i].split('*')[0],'x',processed_ls[i].split('^')[1]]
-        processed_ls[i] = ls
-    
-    return processed_ls
+    except:
+        for i in str:
+            if i != ' ':
+                text+=i
+        processed_ls = text.split('+')
+        
+        for i in range(len(processed_ls)):
+            ls = [processed_ls[i].split('*')[0],'x',processed_ls[i].split('^')[1]]
+            processed_ls[i] = ls
+        
+        return processed_ls
 
 def anti_process(ls):  #in processed form
     normal_form = ""
@@ -45,13 +47,28 @@ def display_mat(mat): #makes a matrix consisting of expressions into displayable
     for i in range(len(mat)):
         row = []
         for j in range(len(mat[0])):
-            if len(mat[i][j]) == 1 and int(mat[i][j][0][2]) == 0:
-                row.append(mat[i][j][0][0])
-            else:   
-                row.append(anti_process(mat[i][j]))
+            row.append(display_exp(mat[i][j]))    
         displayed_mat.append(row)
 
     return displayed_mat
+
+def display_exp(inp_exp):
+    exp = []
+    for term in inp_exp:
+        if float(term[0])!=0:  #remove all 0 terms like 0*x^3 etc from the expression as number has only 1 non zero term
+            if float(term[0]) == int(float(term[0])):  #to have 3 as coefficient rather than 3.0
+                term[0] = str(int(float(term[0])))
+            exp.append(term)
+
+    if len(exp) == 0:
+        exp.append(["0","x","0"])  #for transpose functions
+
+    if len(exp) == 1 and int(exp[0][2]) == 0:
+        return exp[0][0]
+    else:
+        pretty_exp = anti_process(exp)
+        pretty_exp = pretty_exp.replace("+-","-")
+        return pretty_exp
             
 
 def max_power(exp): #exp1,2 are in processed form ie [['1', 'x', '3'], ['3', 'x', '2'], ['3', 'x', '1'], ['1', 'x', '0']]
@@ -102,7 +119,7 @@ def polyadd(exp1,exp2): #exp1,2 are in processed form ie [['1', 'x', '3'], ['3',
     for i in range(len(e1)):
         for j in range(len(e2)):
             if int(e1[i][2]) == int(e2[j][2]):
-                sum.append([str(int(e1[i][0])+int(e2[j][0])),'x',e1[i][2]])               
+                sum.append([str(float(e1[i][0])+float(e2[j][0])),'x',e1[i][2]])               
     return sum
             
                         
@@ -112,10 +129,10 @@ def polyproduct(exp1,exp2): #mutiply 2 polynomials - exp1,2 are in processed for
     ans = create_zeropoly(u1,u2)
     for i in range(len(u1)):
         for j in range(len(u2)):
-            product = [int(u1[i][0])*int(u2[j][0]),'x',int(u1[i][2])+int(u2[j][2])]
+            product = [float(u1[i][0])*float(u2[j][0]),'x',int(u1[i][2])+int(u2[j][2])]
             for k in range(len(ans)):
                 if int(ans[k][2]) == int(u1[i][2])+int(u2[j][2]):
-                    ans[k][0] = str(int(u1[i][0])*int(u2[j][0])+int(ans[k][0]))
+                    ans[k][0] = str(float(u1[i][0])*float(u2[j][0])+float(ans[k][0]))
     return ans
             
             
@@ -143,8 +160,6 @@ def det(mat): # mat is in processed form
         return deter
     elif len(mat) == 2:
         return det_order2(mat)
-    else:
-        print("newb")
         
 def det_to_num(exp): #exp is output to the det function which is in processed form, used to find numerical det
     for term in exp:
@@ -201,8 +216,8 @@ def coefficient_ls(exp):
     high = max_power(exp)
     for i in range(high,-1,-1):
         for j in range(high+1):
-            if int(exp[j][2]) == i and not(coefficient_mat==[] and int(exp[j][0]) == 0):
-                coefficient_mat.append(int(exp[j][0]))             
+            if float(exp[j][2]) == i and not(coefficient_mat==[] and float(exp[j][0]) == 0):
+                coefficient_mat.append(float(exp[j][0]))             
     if coefficient_mat == []:
         coefficient_mat.append(0)    
     return coefficient_mat
@@ -268,7 +283,8 @@ def inp_mat(m,n,expression): #where m and n is number of rows and columns
     for i in range(m):
         row = []
         for j in range(n):
-            row.append(process(input(f"item at row {i}, column {j}" + "(in form 5*x^4+1*x^0)"*expression + " :  ")))
+            inp = input(f"item at row {i}, column {j}" + "(in form 5*x^4+1*x^0)"*expression + " :  ").replace("-","+-")
+            row.append(process(inp))
         mat.append(row)
     return mat #mat is in processed form
 
@@ -309,7 +325,6 @@ number_of_matrix = int(input("unary operation or binary? Enter 1 or 2 :  "))
 expressions = int(input("Matrix contains expressions? (1 for yes, 0 for no) :  "))
 
 if number_of_matrix == 2:
-    del features_available[0:6]
 
     row1 = int(input("number of rows of matrix 1:  "))
     column1 = int(input("number of columns of matrix 1:  "))
@@ -321,7 +336,7 @@ if number_of_matrix == 2:
     mat2 = inp_mat(row2,column2,expressions)
     print()
 
-    #check error
+    #check whether sum is applicable
     if row1 == row2 and column1 == column2:
         print("Sum: ")
         print_mat(display_mat(mat_add(mat1,mat2)))
@@ -329,20 +344,29 @@ if number_of_matrix == 2:
         print("for sum, they must have same number of rows and columns.")
 
 else:
-    del features_available[6:]
     rows = int(input("number of rows of matrix:  "))
     columns = int(input("number of columns of matrix:  "))
     print()
-    
     mat = inp_mat(rows,columns,expressions)
-    if rows != columns:
-        del features_available[1:]
-        print("Transpose: ")
-        print_mat(display_mat(transpose(mat)))
+
+    print("Transpose: ")
+    print_mat(display_mat(transpose(mat)))
+    print()
+
+    if rows == columns:
+        print('Determinant: ')
+        print(display_exp(det(mat)))
+        print()
+
+        print("Adjoint: ")
+        print_mat(display_mat(adjoint(mat)))
+        print()
         
-    else:       
-        if det(mat) == 0:
-            features_available.remove("inverse")
+
+    else:
+        print("Matrix must be a square matrix to perform other operations.")
+        
+        
 
 
 
