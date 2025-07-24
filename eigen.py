@@ -160,6 +160,8 @@ def det(mat): # mat is in processed form
         return deter
     elif len(mat) == 2:
         return det_order2(mat)
+    else:
+        return mat[0][0]
         
 def det_to_num(exp): #exp is output to the det function which is in processed form, used to find numerical det
     for term in exp:
@@ -362,28 +364,22 @@ else:
         print_mat(display_mat(adjoint(mat)))
         print()
 
-        if float(display_exp(det(mat))) != 0:
+        if expressions ==0 and float(display_exp(det(mat))) != 0 or expressions == 1 :
             print("Inverse: ")
             print_mat(display_mat(inv(mat)))
+            print()
 
         
         if expressions == 0:
             print("Characteristic Polynomial: ")
             print(display_exp(characteristic_poly(mat)))
-
-        
-            
-
-
-
-        
-        
+            print()
 
     else:
         print("Matrix must be a square matrix to perform other operations.")
 
 
-"""Adjoint of polynomial matrix"""
+"""solve division for inverse and replace deconvolve"""
         
         
 
