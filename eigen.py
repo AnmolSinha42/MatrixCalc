@@ -14,7 +14,7 @@ def process(str): #in form 5*x^4+1*x^0
         return processed_ls
     
     except:
-        for i in str:
+        for i in str: #remove spaces
             if i != ' ':
                 text+=i
         processed_ls = text.split('+')
@@ -166,7 +166,7 @@ def det_to_num(exp): #exp is output to the det function which is in processed fo
         if term[2] == '0':
             return float(term[0])
      
-def process_mat(inp):
+def process_mat(inp): #converts numbers to expressions
     mat = []
     for i in range(len(inp)):
         row = []
@@ -206,7 +206,7 @@ def mat_add(mat1,mat2): #mat1 and mat2 are in processed form
     return mat
           
 def characteristic_poly(mat):
-    A = process_mat(mat)
+    A = mat
     xI = identity(len(mat))
     poly = det(mat_add(A,xI))
     return poly
@@ -283,7 +283,7 @@ def inp_mat(m,n,expression): #where m and n is number of rows and columns
     for i in range(m):
         row = []
         for j in range(n):
-            inp = input(f"item at row {i}, column {j}" + "(in form 5*x^4+1*x^0)"*expression + " :  ").replace("-","+-")
+            inp = input(f"item at row {i}, column {j}" + "(in form 5*x^4+1*x^0)"*expression + " :  ").replace("-","+"*expression+"-")
             row.append(process(inp))
         mat.append(row)
     return mat #mat is in processed form
@@ -361,10 +361,29 @@ else:
         print("Adjoint: ")
         print_mat(display_mat(adjoint(mat)))
         print()
+
+        if float(display_exp(det(mat))) != 0:
+            print("Inverse: ")
+            print_mat(display_mat(inv(mat)))
+
+        
+        if expressions == 0:
+            print("Characteristic Polynomial: ")
+            print(display_exp(characteristic_poly(mat)))
+
+        
+            
+
+
+
+        
         
 
     else:
         print("Matrix must be a square matrix to perform other operations.")
+
+
+"""Adjoint of polynomial matrix"""
         
         
 
